@@ -1,0 +1,497 @@
+/*
+Sydney Lieske 
+*/
+
+/*
+drop table BOOKCHECKOUT;
+drop table MEMBER;
+drop table LIBRARYSYSTEM;
+drop table EMPLOYEE;
+drop table JOB;
+drop table BOOKS;
+drop table SECTION;
+drop table LIBRARY;
+drop table PUBLISHER;
+drop table AUTHOR;
+
+
+create table AUTHOR ( 
+    AuthorID            number not null, 
+    AuthorFirstName     varchar2(20) not null, 
+    AuthorLastName      varchar2(20) not null, 
+    DOB                 date not null, 
+    PRIMARY KEY (authorID)
+);
+
+create table PUBLISHER (
+    PublisherID         number not null,
+    PublisherName       varchar2(30) not null,
+    PublisherDate       date not null, 
+    PRIMARY KEY (publisherID)
+);
+
+create table LIBRARY (
+    LibraryID           number not null,
+    LibraryAddress      varchar2(30) not null,
+    LibraryName         varchar2(30) not null,
+    PRIMARY KEY (LIBRARYID)
+);
+
+create table SECTION (
+    SectionID           number not null,
+    LibraryID           number not null,
+    DeweyDecimal        number not null,
+    PRIMARY KEY (SECTIONID),
+    FOREIGN KEY (LIBRARYID) REFERENCES LIBRARY(LIBRARYID),
+    CONSTRAINT CheckDewyIsValid CHECK (DeweyDecimal > 0 AND DeweyDecimal < 1000)
+);
+
+create table BOOKS (
+    ISBN                number not null,
+    SectionID           number not null,
+    AuthorID            number,
+    PublisherID		number not null,
+    Title               varchar2(30) not null,
+    PRIMARY KEY (ISBN),
+    FOREIGN KEY (SECTIONID) REFERENCES SECTION(SECTIONID),
+    FOREIGN KEY(AUTHORID) REFERENCES AUTHOR(AUTHORID),
+    FOREIGN KEY (PUBLISHERID) REFERENCES PUBLISHER(PUBLISHERID)
+);
+
+create table JOB (
+    JobID               number not null,
+    JobType             varchar2(20) not null,
+    JobDesc             varchar2(51) not null,
+    PRIMARY KEY (JOBID)
+);
+
+create table EMPLOYEE (
+    EMPID               number not null,
+    LibraryID           number not null,
+    JobID               number not null,
+    MemberID            number not null,
+    PRIMARY KEY (EMPID),
+    FOREIGN KEY (LIBRARYID) REFERENCES LIBRARY(LIBRARYID),
+    FOREIGN KEY (JOBID) REFERENCES JOB(JOBID)
+);
+
+create table MEMBER (
+    MemberID            number not null,
+    MemberName          varchar2(20) not null,
+    DOB                 date not null,
+    PhoneNumber         number not null,
+    PRIMARY KEY (MEMBERID)
+);
+
+create table MEMBERACCOUNT (
+    LibraryID           number not null,
+    MemberID            number not null,
+    UserType            varchar2(20) not null,
+    Password            varchar2(20) not null,
+    FOREIGN KEY (LibraryID) REFERENCES LIBRARY(LIBRARYID),
+    FOREIGN KEY (MEMBERID) REFERENCES MEMBER(MEMBERID)
+);
+
+create table BOOKCHECKOUT (
+CheckoutID              number not null,
+MemberID                number not null,
+ISBN                    number not null,
+AvailableCopy           number not null,
+TotalCopy               number not null,
+BorrowedDate            date not null,
+ReturnDate              date,
+PRIMARY KEY (CHECKOUTID),
+FOREIGN KEY (MEMBERID) REFERENCES MEMBER(MEMBERID)
+);
+
+
+-- Scripts to populate data into all your tables (at least 5 rows per table) (20 points)  
+
+--Author Table
+INSERT INTO Author 
+VALUES('123456', 'Sam', 'Gibbs', TO_DATE('19/Sep/1997'));
+
+INSERT INTO Author 
+VALUES('102068', 'Khris', 'Davidson', TO_DATE('01/Dec/1984'));
+
+INSERT INTO Author 
+VALUES('174387', 'Emily', 'Howard', TO_DATE('15/Apr/1981'));
+
+INSERT INTO Author 
+VALUES('174287', 'Ashley', 'Olvera', TO_DATE('20/May/1971'));
+
+INSERT INTO Author 
+VALUES('199834', 'Harrison', 'Oliver', TO_DATE('04/Feb/1978'));
+
+--select * from Author;
+
+--Publisher Table
+
+INSERT INTO Publisher
+VALUES('264074', 'Penguins Co', TO_DATE('21/Apr/2015'));
+
+INSERT INTO Publisher
+Values('287354', 'RELS', TO_DATE('15/Oct/2001'));
+
+INSERT INTO Publisher
+VALUES('234785', 'CollinsHarp', TO_DATE('01/Jan/2011'));
+
+INSERT INTO Publisher
+VALUES('221654','Parliament House', TO_DATE('07/May/2008'));
+
+INSERT INTO Publisher
+VALUES('257812', 'TITAN Books', TO_DATE('24/Dec/2016'));
+
+INSERT INTO Publisher
+VALUES('214573', 'Rocket Scholar', TO_DATE('12/Aug/2004'));
+
+--select * from Publisher;
+
+
+--Library Table
+INSERT INTO Library
+VALUES('345248', '529 Booksvile Ave', 'Legacy Library');
+
+INSERT INTO Library
+VALUES('327845', '2254 Chapmans Lane','Frontier Library');
+
+INSERT INTO Library
+VALUES('389245', '3616 Foley Street', 'Grand Oak Library');
+
+INSERT INTO Library
+VALUES('336417', '3095 Trainer Avenue', 'Plainfield Library');
+
+INSERT INTO Library
+VALUES('324812', '1101 Kembery Drive', 'Institute Library');
+
+--select * from Library;
+
+
+--Section Table
+INSERT INTO Section
+VALUES('401','345248', '800');
+
+INSERT INTO Section
+VALUES('402','345248', '400');
+
+INSERT INTO Section
+VALUES('403','389245', '300');
+
+INSERT INTO Section
+VALUES('404','336417', '700');
+
+INSERT INTO Section
+VALUES('405','336417', '200');
+
+--select * from Section;
+
+
+--Books Table
+INSERT INTO Books
+VALUES('9780147512734','402','123456', '264074', 'Castle Hangnail');
+
+INSERT INTO Books
+VALUES('9783942869133','401','102068', '264074', 'Frankenstein');
+
+INSERT INTO Books
+VALUES('9780090440764','403','174387', '264074', 'Isle of Truth');
+
+INSERT INTO Books
+VALUES('9789211746402','404','174287', '234785', 'How to Not Be Wrong');
+
+INSERT INTO Books
+VALUES('9784829465750','405','199834', '234785', 'Dracula');
+
+--select * from Books;
+
+
+--Job Table
+INSERT INTO Job
+VALUES('501', 'Librarian','Help people with homework and research questions.');
+
+INSERT INTO Job
+VALUES('502', 'Pages','Puts the books and other items on the shelves.');
+
+INSERT INTO Job
+VALUES('503', 'Library Managers','Coordinates phases of the library activities.');
+
+INSERT INTO Job
+VALUES('504', 'Library Assistant', 'Check materials out and in, collect fines and fees.');
+
+INSERT INTO Job
+VALUES('505', 'Library Directors', 'Preparing and overseeing the budget.');
+
+--select * from Job;
+
+
+--Member Table 
+INSERT INTO Member
+VALUES('101','Chris Orto',TO_DATE('12/Dec/1993'),'7854135891');
+
+INSERT INTO Member
+VALUES('102','John Hare',TO_DATE('14/Feb/2000'),'9824782478');
+
+INSERT INTO Member
+VALUES('103', 'Sheryl Lee',TO_DATE('04/May/1992'),'1478244754');
+
+INSERT INTO Member
+VALUES('104', 'Derek Green',TO_DATE('18/Oct/1997'),'2453635574');
+
+INSERT INTO Member
+VALUES('105', 'Alex Brown',TO_DATE('21/Jul/1984'),'3254126696');
+
+INSERT INTO MEMBER
+VALUES('106', 'Alfred Johnson', '18/JUN/2000', '1894972000');
+
+--select * from Member;
+
+
+--Employee Table
+INSERT INTO Employee
+VALUES('601', '345248', '501', '101');
+
+INSERT INTO Employee
+VALUES('602','345248','502', '102');
+
+INSERT INTO Employee
+VALUES('603','345248','503', '103');
+
+INSERT INTO Employee
+VALUES('604','345248','504', '104');
+
+INSERT INTO Employee
+VALUES('605','345248','505','105');
+
+--select * from Employee;
+
+
+MEMBERACCOUNT Table
+INSERT INTO MEMBERACCOUNT
+VALUES('345248', '101', 'Employee', 'password');
+
+INSERT INTO MEMBERACCOUNT
+VALUES('327845', '102','Employee', 'notpassword');
+
+INSERT INTO MEMBERACCOUNT
+VALUES('389245', '103','Member', 'goodpassword');
+
+INSERT INTO MEMBERACCOUNT
+VALUES('336417', '104','Member', 'badpassword');
+
+INSERT INTO MEMBERACCOUNT
+VALUES('324812', '105','Member', 'extrmepassword');
+
+--select * from MEMBERACCOUNT;
+
+
+
+--BookCheckout Table
+INSERT INTO BookCheckout
+VALUES('901', '101','9780147512734','4','10',TO_DATE('15/Apr/2022'),TO_DATE('01/May/2022'));
+
+INSERT INTO BookCheckout
+VALUES('902', '102','9783942869133','2','8',TO_DATE('04/Apr/2022'),TO_DATE('20/Apr/2022'));
+
+INSERT INTO BookCheckout
+VALUES('903','103','9780090440764','1','10',TO_DATE('10/Feb/2022'),TO_DATE('24/Apr/2022'));
+
+INSERT INTO BookCheckout (CheckoutID, MemberID, ISBN, AvailableCopy, TotalCopy, BorrowedDate)
+VALUES('904','104','9789211746402','6','10',TO_DATE('21/Mar/2022'));
+
+INSERT INTO BookCheckout (CheckoutID, MemberID, ISBN, AvailableCopy, TotalCopy, BorrowedDate)
+VALUES('905','105','9784829465750','3','6',TO_DATE('14/Jan/2022'));
+
+INSERT INTO BookCheckout (CheckoutID, MemberID, ISBN, AvailableCopy, TotalCopy, BorrowedDate)
+VALUES('906','106','9784829465750','2','6',TO_DATE('14/Jan/2022'));
+
+--select * from BookCheckout;
+
+
+-- Scripts to update data (update (SQL DML) statements should be in various complexity, at least 2 per table) (20 points)  
+/*
+UPDATE AUTHOR
+SET AuthorFirstName = 'Chris'
+WHERE AuthorLastName = 'Davidson';
+
+UPDATE AUTHOR
+SET DOB ='14/Apr/1981'
+WHERE AuthorID ='174387';
+
+--select * from Author
+
+UPDATE PUBLISHER
+SET PublisherID = '287354'
+WHERE PublisherDate = '15/Oct/2001';
+
+UPDATE PUBLISHER
+SET PublisherDate ='05/Sep/205'
+WHERE PublisherName ='Rocket Scholar';
+
+--select * from Publisher
+
+UPDATE LIBRARY
+SET LibraryAddress = '530 Bluejay Dr'
+WHERE LibraryName ='Legacy Library';
+
+UPDATE Library
+SET LibraryName ='Sebring Library'
+WHERE LibraryID ='324812';
+
+--select * from Library
+
+UPDATE SECTION
+SET LibraryID ='324812'
+WHERE SectionID ='401';
+
+UPDATE SECTION
+SET DeweyDecimal ='500'
+WHERE SectionID ='405';
+
+--select * from Section
+
+UPDATE BOOKS
+SET Title ='Of Mice and Men'
+WHERE ISBN ='9780090440764';
+
+UPDATE BOOKS
+Set PublisherID ='287354'
+WHERE AuthorID = '174287';
+--select * from Books
+
+UPDATE JOB
+SET JobType ='Library Admin'
+WHERE JobID ='503';
+
+UPDATE Job
+SET JobDesc ='Controls the library database.'
+WHERE JobTYpe ='Library Admin';
+--select * from Job
+
+UPDATE Member
+SET MemberName = 'Chris Ortiz'
+WHERE MemberID = '101';
+
+UPDATE Member
+SET DOB ='17/Mar/2001'
+WHERE PhoneNumber ='7854135891';
+
+--select * from Member;
+
+UPDATE EMPLOYEE
+SET LibraryID = '324812'
+WHERE EMPID ='602';
+
+UPDATE EMPLOYEE
+SET JOBID = '502'
+WHERE MemberID ='104';
+
+--select * from EMPLOYEE
+
+UPDATE MEMBERACCOUNT
+SET password ='?kHg]r4%?E}3/AG'
+WHERE MemberID='103';
+
+UPDATE MEMBERACCOUNT
+SET LibraryID = '389245'
+WHERE UserType = 'EMPLOYEE';
+
+--select * from MEMBERACCOUNT
+
+UPDATE BookCheckout
+SET TotalCopy = '10'
+where CheckoutID ='905';
+
+UPDATE BookCheckout
+SET ReturnDate ='03/Apr/2022'
+Where BorrowedDate ='21/Mar/22';
+
+--select * from BookCheckout
+
+*/
+At least 5 query scripts to answer questions about your organization and its operations (40 points)  
+    Must include at least 2 aggregation queries utilizing group by and order by.  
+    Should be in various complexity joining two, three, and four tables 
+*/
+
+
+SELECT CONCAT(CONCAT(A.AuthorFirstName, ' '), A.AuthorLastName) as AUTHOR_NAME, 
+B.Title as BOOK_TITLE, M.MemberName as MEMBER_NAME,
+BC.BorrowedDate as DATE_BORROWED
+FROM AUTHOR A
+JOIN BOOKS B USING (AuthorID)
+JOIN BOOKCHECKOUT BC USING (ISBN)
+JOIN MEMBER M USING (MEMBERID)
+GROUP BY M.MEMBERNAME, B.TITLE, CONCAT(CONCAT(A.AuthorFirstName, ' '), A.AuthorLastName), BC.BORROWEDDATE
+ORDER BY MEMBER_NAME ASC, DATE_BORROWED DESC;
+--Selects the Author name, book name, and the date checked out of all books that have been checked out
+
+
+SELECT PUBLISHERNAME as PUBLISHER_NAME, PUBLISHER_COUNT as BOOKS_PUBLISHED
+FROM (
+SELECT P.PUBLISHERNAME,
+
+(SELECT COUNT (B.ISBN)
+FROM BOOKS B
+JOIN PUBLISHER Pub ON B.PUBLISHERID = Pub.PUBLISHERID
+WHERE Pub.PUBLISHERID = P.PUBLISHERID) AS PUBLISHER_COUNT
+FROM PUBLISHER P)
+
+GROUP BY PUBLISHERNAME, PUBLISHER_COUNT
+ORDER BY PUBLISHER_COUNT DESC, PUBLISHERNAME ASC;
+--Selects the name of each publisher and counts the number of books they've published
+
+
+SELECT UNIQUE M.MEMBERNAME AS EMPLOYEE_NAME, M.PHONENUMBER AS PHONE_NUMBER,
+ROUND(SYSDATE - BC.BORROWEDDATE) AS DAYS_SINCE_CHECKOUT
+FROM EMPLOYEE E
+JOIN MEMBER M ON E.MEMBERID = M.MEMBERID
+JOIN BOOKCHECKOUT BC ON M.MEMBERID = BC.MEMBERID
+WHERE BC.RETURNDATE IS NULL
+ORDER BY DAYS_SINCE_CHECKOUT DESC, EMPLOYEE_NAME ASC;
+--Selects the name and phone number of each employee who has not returned a book along with how long ago the book was checked out
+
+
+SELECT CONCAT(CONCAT(AUTHORFIRSTNAME, ' '), AUTHORLASTNAME) AS AUTHOR_NAME, TITLE AS BOOK_TITLE
+FROM AUTHOR
+JOIN BOOKS USING (AUTHORID)
+ORDER BY BOOK_TITLE ASC;
+--Selects the name of a book along with the name of the author who wrote it
+
+
+
+SELECT CONCAT(CONCAT(A.AUTHORFIRSTNAME, ' '), A.AUTHORLASTNAME) AS AUTHOR_NAME, B.TITLE AS BOOK_TITLE,
+J.JOBDESC as JOB_DESCRIPTION
+FROM AUTHOR A
+JOIN BOOKS B ON A.AUTHORID = B.AUTHORID
+JOIN BOOKCHECKOUT BC ON B.ISBN = BC.ISBN
+JOIN MEMBER M ON BC.MEMBERID = M.MEMBERID
+JOIN EMPLOYEE E ON M.MEMBERID = E.MEMBERID
+JOIN JOB J ON E.JOBID = J.JOBID;
+--Selects the author's name, the name of the book, and the job description of the employee who checked it out
+
+
+
+
+
+/*
+At least 4 scripts (update or insert) to demonstrate that you receive errors from the database because of the constraints 
+(integrity, check, referential, not null constraints) implemented in your database.  
+    One script per constraint type (integrity, check, referential, not null)  
+*/
+
+INSERT INTO AUTHOR (AuthorID)
+VALUES ('489157');
+--not null constraint
+
+INSERT INTO AUTHOR
+VALUES('123456', 'Sam', 'Gibbs', TO_DATE('19/Sep/1997'));
+--integrity constraint
+
+UPDATE SECTION
+SET DeweyDecimal = 1234
+WHERE SectionID = '405';
+--CheckDewyIsValid check constraint
+
+INSERT INTO BookCheckout
+VALUES('901', '007','9780147512734','4','10',TO_DATE('15/Apr/2022'),TO_DATE('01/May/2022'));
+--referential constraint
