@@ -1,21 +1,6 @@
 # Library-Management-Database
 SQL Database Project Creating a Library Management System
 
-The database is for a library's catalog of books, noting which ones are available and information about the book, such as:​
+The project involves the creation of a Library Management System using a SQL database. The system aims to maintain a comprehensive catalog of books available in the library, including their authors, publishers, number of copies available, titles, ISBNs, genres, and sections in the library. Additionally, the system tracks the borrowed date and return date of books.
 
-- Author​
-- Publisher​
-- Number of copies available​
-- Title ​
-- ISBN​
-- Genre ​
-- Section in the library​
-- Borrowed date and return date​
-
-This database is available to the librarians, assistant librarians, and library members. ​
-
-Each has their own ID number (an EMPID and a MemberID, respectively).​
-
-Members have an account with their date of birth, username, and password.​
-
-Workers at the library have a libraryID, JobID, and JobType.​
+The database can be accessed by librarians, assistant librarians, and library members, each with their unique ID numbers (EMPID and MemberID). Library members have an account that includes their date of birth, username, and password. Workers at the library also have a libraryID, JobID, and JobType recorded in the system.
